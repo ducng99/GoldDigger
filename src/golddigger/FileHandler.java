@@ -68,7 +68,7 @@ public class FileHandler {
             
             for (Entry<String,Integer> entry : players.entrySet())
             {
-                fileWriter.write(entry.getKey() + " : " + entry.getValue());
+                fileWriter.write(entry.getKey() + " : " + entry.getValue() + "\n");
             }
             
             fileWriter.close();

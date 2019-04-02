@@ -18,11 +18,20 @@ public class GameMain {
     
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
+        String name;
+        boolean nameOK = false;
         
-        Utils.log("What is your name?");
-        String name = scan.nextLine();
+        do
+        {
+            Utils.log("What is your name?");
+            name = scan.nextLine();
+            nameOK = checkName(name);
+        }
+        while (!nameOK);
         
-        FileHandler.loadData();
+        ScoreBoard sBoard = new ScoreBoard(FileHandler.loadData());
+        sBoard.showBoard();
+        
         if (FileHandler.checkPlayer(name))
         {
             Utils.log("Your previous highscore is " + FileHandler.getScore(name));
@@ -155,7 +164,32 @@ public class GameMain {
      */
     private static int calculateFinalScore()
     {
-        return player.getScore() - (int)(timer.getTime() / 5.);
+        int score = player.getScore() - (int)(timer.getTime() / 5.);
+        if (score < 0)
+            score = 0;
+        return score;
+    }
+    
+    private static boolean checkName(String name)
+    {
+        if (name.length() > 0 && name.length() < 17)
+        {
+            char[] nameC = name.toLowerCase().toCharArray();
+            
+            for (char c : nameC)
+            {
+                if ((c < 'a' || c > 'z') && (c < '0' || c > '9'))
+                {
+                    Utils.log(("Name is invalid!"));
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        Utils.log("Name can be up to 16 characters only!");
+        return false;
     }
     
     private static void printHelp()
