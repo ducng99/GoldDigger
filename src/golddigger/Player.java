@@ -2,7 +2,7 @@
 package golddigger;
 
 /**
- *
+ * Class contains information about Player
  * @author Duc Nguyen 17974984
  */
 public class Player {
@@ -19,11 +19,11 @@ public class Player {
         this.setPos(new int[] {2, GameMain.gameWidth / 2});
     }
 
-    public Player(String name, int score, int[] pos, int life) {
+    public Player(String name, int score) {
         this.setName(name);
         this.setScore(score);
-        this.setLife(life);
-        this.setPos(pos);
+        this.setLife(3);
+        this.setPos(new int[] {2, GameMain.gameWidth / 2});
     }
     
     public void moveLeft()

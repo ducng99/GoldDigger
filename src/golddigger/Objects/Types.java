@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Enum class contains types of objects
  * @author Maxhyt
  */
 public enum Types {

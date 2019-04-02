@@ -3,7 +3,7 @@ package golddigger;
 import golddigger.Objects.*;
 import java.util.Scanner;
 /**
- *
+ * 
  * @author Duc Nguyen 17974984
  */
 public class GameMain {
@@ -21,6 +21,12 @@ public class GameMain {
         
         Utils.log("What is your name?");
         String name = scan.nextLine();
+        
+        FileHandler.loadData();
+        if (FileHandler.checkPlayer(name))
+        {
+            Utils.log("Your previous highscore is " + FileHandler.getScore(name));
+        }
         
         player = new Player(name);
         map = new Map(gameHeight, gameWidth);
@@ -70,11 +76,13 @@ public class GameMain {
             Utils.log(player.toString() + " Time: " + timer.getTime());
             View.drawMap(map, player.getPos());
         }
-        timer.stopTimer();
-        Utils.log("Your Final Score is " + calculateFinalScore());
-        Utils.log("Game ended!");
+        
+        endGame();
     }
     
+    /**
+     * Check which type of block player is on and display info attached to each type
+     */
     private static void checkBlock()
     {
         GameObject curBlock = map.getBlock(player.getPos());
@@ -112,6 +120,14 @@ public class GameMain {
                     
                     map.setBlock(player.getPos(), curBlock);
                     
+                    Utils.log("\nYOU ARE NOW OFFICIALLY A\n" +
+                            "   ______                             __\n" +
+                            "  /      |                           /  |\n" +
+                            " /       |_________________________ /   |\n" +
+                            "|        |___G O L D D I G G E R___|    |\n" +
+                            " \\       |                          \\   |\n" +
+                            "  \\______|                           \\__|");
+                    
                     gameInProgress = false;
                 case SKY:
                 case DIRT:
@@ -121,6 +137,22 @@ public class GameMain {
         }
     }
     
+    /**
+     * Display information at end game and save the information to file
+     */
+    private static void endGame()
+    {
+        timer.stopTimer();
+        int finalScore = calculateFinalScore();
+        FileHandler.saveData(player.getName(), finalScore);
+        Utils.log("Your Final Score is " + finalScore);
+        Utils.log("Game ended!");
+    }
+    
+    /**
+     * Calculate final score using given equation
+     * @return final score
+     */
     private static int calculateFinalScore()
     {
         return player.getScore() - (int)(timer.getTime() / 5.);

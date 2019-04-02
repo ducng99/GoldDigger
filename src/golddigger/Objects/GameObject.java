@@ -2,7 +2,7 @@
 package golddigger.Objects;
 
 /**
- *
+ * Abstract class for objects in game
  * @author Duc Nguyen 17974984
  */
 public abstract class GameObject {
