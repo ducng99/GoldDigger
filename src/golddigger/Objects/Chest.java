@@ -2,7 +2,7 @@ package golddigger.Objects;
 
 /**
  *
- * @author kqn1498
+ * @author Duc Nguyen 17974984
  */
 public class Chest extends GameObject {
     

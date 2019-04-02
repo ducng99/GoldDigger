@@ -2,7 +2,7 @@ package golddigger;
 
 /**
  *
- * @author kqn1498
+ * @author Duc Nguyen 17974984
  */
 public class Timer extends Thread {
     private int time;

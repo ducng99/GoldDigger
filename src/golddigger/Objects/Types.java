@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Enum class contains types of objects
- * @author Maxhyt
+ * @author Duc Nguyen 17974984
  */
 public enum Types {
     DIAMOND(1),
