@@ -2,21 +2,22 @@
 package golddigger;
 
 import golddigger.Objects.*;
+import java.util.Observable;
 /**
  *
  * @author Duc Nguyen 17974984
  */
-public class Map {
-    private int gameHeight;
+public class Map extends Observable {
     private int gameWidth;
+    private int gameHeight;
     
     private GameObject[][] map;
     
-    public Map(int height, int width)
+    public Map(int width, int height)
     {
-        this.setGameHeight(height);
         this.setGameWidth(width);
-        map = new GameObject[gameHeight][gameWidth];
+        this.setGameHeight(height);
+        map = new GameObject[gameWidth][gameHeight];
     }
     
     public void generateMap()
@@ -24,21 +25,21 @@ public class Map {
         Types.generateMap();
         int chestWidth = Utils.getRand(0, gameWidth - 1);
         
-        for (int height = 0; height < map.length; height++)
+        for (int width = 0; width < map.length; width++)
         {
-            for (int width = 0; width < map[height].length; width++)
+            for (int height = 0; height < map[width].length; height++)
             {
                 if (height < 3)
                 {
-                    map[height][width] = new Sky();
+                    map[width][height] = new Sky();
                 }
-                else if (width == chestWidth && height == map.length - 1)
+                else if (width == chestWidth && height == map[width].length - 1)
                 {
-                    map[height][width] = new Chest();
+                    map[width][height] = new Chest();
                 }
                 else
                 {
-                    map[height][width] = generateBlock();
+                    map[width][height] = generateBlock();
                 }
             }
         }
@@ -82,6 +83,8 @@ public class Map {
     public void setBlock(int[] pos, GameObject object)
     {
         map[pos[0]][pos[1]] = object;
+        setChanged();
+        notifyObservers();
     }
 
     public boolean setGameHeight(int gameHeight) {

@@ -1,5 +1,7 @@
 package golddigger;
 
+import Controllers.*;
+import Views.GameView;
 import golddigger.Objects.*;
 import java.util.Scanner;
 /**
@@ -11,10 +13,25 @@ public class GameMain {
     private static Map map;
     private static Timer timer = new Timer();
     
-    public static final int gameHeight = 9;
     public static final int gameWidth = 15;
+    public static final int gameHeight = 9;
     
     private static boolean gameInProgress;
+    
+    public GameMain()
+    {
+        GameView gameView = new GameView(map, player);
+        
+        GameController.addMap(map);
+        GameController.addPlayer(player);
+        
+        GameController gameController = new GameController();
+        
+        map.addObserver(gameView);
+        player.addObserver(gameView);
+        
+        gameView.addController(gameController);
+    }
     
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
@@ -24,6 +41,9 @@ public class GameMain {
         GameDB.establishConnection();
         GameDB.initializeDB();
         
+        map = new Map(gameWidth, gameHeight);
+        map.generateMap();
+        
         do
         {
             Utils.log("What is your name?");
@@ -32,18 +52,17 @@ public class GameMain {
         }
         while (!nameOK);
         
-        player = new Player(name);
+        player = GameDB.getPlayer(name);
         
-        ScoreBoard sBoard = new ScoreBoard(FileHandler.loadData());
-        sBoard.showBoard();
-        
-        if (FileHandler.checkPlayer(name))
+        if (player != null)
         {
-            Utils.log("Your previous highscore is " + FileHandler.getScore(name));
+            Utils.log("Your previous highscore is " + player.getScore());
         }
+        else
+            player = new Player(name);
         
-        map = new Map(gameHeight, gameWidth);
-        map.generateMap();
+        //Initialize MVC
+        GameMain game = new GameMain();
         
         gameInProgress = true;
         printInstructions();
@@ -51,103 +70,10 @@ public class GameMain {
         Utils.log(player.toString());
         
         timer.start();
-        View.drawMap(map, player.getPos());
         
-        while (gameInProgress)
-        {
-            System.out.print("\nEnter command: ");
-            String command = scan.nextLine();
-            
-            switch(command)
-            {
-                case "left":
-                    player.moveLeft();
-                    checkBlock();
-                    break;
-                case "right":
-                    player.moveRight();
-                    checkBlock();
-                    break;
-                case "down":
-                    player.moveDown();
-                    checkBlock();
-                    break;
-                case "help":
-                    printHelp();
-                    break;
-                case "ins":
-                    printInstructions();
-                    break;
-                case "exit":
-                    gameInProgress = false;
-                    timer.stopTimer();
-                    break;
-                default:
-                    Utils.log("Invalid command");
-                    break;
-            }
-            Utils.log(player.toString() + " Time: " + timer.getTime());
-            View.drawMap(map, player.getPos());
-        }
+        Utils.log(player.toString() + " Time: " + timer.getTime());
         
         endGame();
-    }
-    
-    /**
-     * Check which type of block player is on and display info attached to each type
-     */
-    private static void checkBlock()
-    {
-        GameObject curBlock = map.getBlock(player.getPos());
-        Types blockType = curBlock.getType();
-        
-        if (!curBlock.isDiscovered())
-        {
-            curBlock.setDiscovered(true);
-            
-            switch (blockType)
-            {
-                case DIAMOND:
-                case GOLD:
-                    player.setScore(player.getScore() + curBlock.getValue());
-                    Utils.log("Player added " + curBlock.getValue() + " scores!");
-                    
-                    map.setBlock(player.getPos(), curBlock);
-                    break;
-                case HEART:
-                    player.setLife(player.getLife() + curBlock.getValue());
-                    Utils.log("Player added " + curBlock.getValue() + " life");
-                    
-                    map.setBlock(player.getPos(), curBlock);
-                    break;
-                case MINE:
-                    player.setLife(player.getLife() - 1);
-                    player.setScore(player.getScore() - curBlock.getValue());
-                    Utils.log("Player steps on a mine. Player lost 1 life and " + curBlock.getValue() + " scores");
-                    
-                    map.setBlock(player.getPos(), curBlock);
-                    break;
-                case CHEST:
-                    player.setScore(player.getScore() + curBlock.getValue());
-                    Utils.log("Player added " + curBlock.getValue() + " scores!");
-                    
-                    map.setBlock(player.getPos(), curBlock);
-                    
-                    Utils.log("\nYOU ARE NOW OFFICIALLY A\n" +
-                            "   ______                             __\n" +
-                            "  /      |                           /  |\n" +
-                            " /       |_________________________ /   |\n" +
-                            "|        |___G O L D D I G G E R___|    |\n" +
-                            " \\       |                          \\   |\n" +
-                            "  \\______|                           \\__|");
-                    
-                    gameInProgress = false;
-                case SKY:
-                case DIRT:
-                default:
-                    break;
-            }
-        }
     }
     
     /**
@@ -157,7 +83,7 @@ public class GameMain {
     {
         timer.stopTimer();
         int finalScore = calculateFinalScore();
-        FileHandler.saveData(player.getName(), finalScore);
+        //FileHandler.saveData(player.getName(), finalScore);
         Utils.log("Your Final Score is " + finalScore);
         Utils.log("Game ended!");
     }
