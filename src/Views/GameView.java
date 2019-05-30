@@ -3,6 +3,8 @@ package Views;
 import Controllers.GameController;
 import golddigger.GameMain;
 import golddigger.Map;
+import golddigger.Objects.GameObject;
+import golddigger.Objects.Types;
 import golddigger.Player;
 import golddigger.Utils;
 import java.util.Observable;
@@ -56,8 +58,18 @@ public class GameView implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object o1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void update(Observable o, Object obj) {
+        if (((String)obj).startsWith("BLOCK:"))
+        {
+            String[] posS = ((String)obj).substring(6).split("-");
+            int[] pos = new int[] {Integer.valueOf(posS[0]), Integer.valueOf(posS[1])};
+            
+            blocks[pos[0]][pos[1]].setText(getBlockType(pos[0], pos[1]));
+        }
+        else
+        {
+            playerB.setLocation(SIZE * player.getPos()[0], SIZE * player.getPos()[1]);
+        }
     }
     
     public void addController(GameController controller)
@@ -72,24 +84,32 @@ public class GameView implements Observer {
     
     private String getBlockType(int width, int height)
     {
-        switch (map.getBlock(new int[] {width, height}).getType())
+        GameObject block = map.getBlock(new int[] {width, height});
+        Types blockType = block.getType();
+        
+        if (!block.isDiscovered())
         {
-            case SKY:
-                return "Sky";
-            case DIAMOND:
-                return "Diamond";
-            case GOLD:
-                return "Gold";
-            case HEART:
-                return "Heart";
-            case MINE:
-                return "Mine";
-            case DIRT:
-                return "Dirt";
-            case CHEST:
-                return "Chest";
-            default:
-                return "";
+            switch (blockType)
+            {
+                case SKY:
+                    return "Sky";
+                case DIAMOND:
+                    return "Diamond";
+                case GOLD:
+                    return "Gold";
+                case HEART:
+                    return "Heart";
+                case MINE:
+                    return "Mine";
+                case DIRT:
+                    return "Dirt";
+                case CHEST:
+                    return "Chest";
+                default:
+                    return "";
+            }
         }
+        else
+            return "Dirt";
     }
 }

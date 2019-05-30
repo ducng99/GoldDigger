@@ -35,7 +35,7 @@ public class Player extends Observable {
         {
             Utils.log("Player moved to (" + this.getPos()[0] + ", " + this.getPos()[1] + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("");
         }
     }
     
@@ -46,7 +46,7 @@ public class Player extends Observable {
         {
             Utils.log("Player moved to (" + this.getPos()[0] + ", " + this.getPos()[1] + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("");
         }
     }
     
@@ -57,7 +57,7 @@ public class Player extends Observable {
         {
             Utils.log("Player moved to (" + this.getPos()[0] + ", " + this.getPos()[1] + ")");
             setChanged();
-            notifyObservers();
+            notifyObservers("");
         }
     }
 
@@ -78,7 +78,7 @@ public class Player extends Observable {
         {
             this.score = score;
             setChanged();
-            notifyObservers();
+            notifyObservers("");
         }
         else
             Utils.log("Score " + score + " is not valid");
@@ -110,7 +110,7 @@ public class Player extends Observable {
         {
             this.life = life;
             setChanged();
-            notifyObservers();
+            notifyObservers("");
         }
         else
             Utils.log("Life not valid");

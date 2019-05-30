@@ -84,7 +84,7 @@ public class Map extends Observable {
     {
         map[pos[0]][pos[1]] = object;
         setChanged();
-        notifyObservers();
+        notifyObservers("BLOCK:" + pos[0] + "-" + pos[1]);
     }
 
     public boolean setGameHeight(int gameHeight) {
