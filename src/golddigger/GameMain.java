@@ -21,6 +21,9 @@ public class GameMain {
         String name;
         boolean nameOK = false;
         
+        GameDB.establishConnection();
+        GameDB.initializeDB();
+        
         do
         {
             Utils.log("What is your name?");
@@ -28,6 +31,8 @@ public class GameMain {
             nameOK = checkName(name);
         }
         while (!nameOK);
+        
+        player = new Player(name);
         
         ScoreBoard sBoard = new ScoreBoard(FileHandler.loadData());
         sBoard.showBoard();
@@ -37,7 +42,6 @@ public class GameMain {
             Utils.log("Your previous highscore is " + FileHandler.getScore(name));
         }
         
-        player = new Player(name);
         map = new Map(gameHeight, gameWidth);
         map.generateMap();
         
