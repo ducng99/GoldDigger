@@ -11,7 +11,6 @@ import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.ImageIcon;
@@ -151,6 +150,10 @@ public class GameView implements Observer {
             for (int i = 0; i < life; i++)
                 lifeCount += "♥";
             lifeLabel.setText(lifeCount);
+        }
+        else if (noti.equals("GAMEEND"))
+        {
+            
         }
         else
         {

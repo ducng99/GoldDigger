@@ -53,25 +53,34 @@ public class Map extends Observable {
     {
         int random = Utils.getRand(1, 100);
         
-        if (random < 1)
+        if (random < 5)
         {
             return new Diamond();
         }
-        else if (random < 5)
+        else if (random < 10)
         {
             return new Gold();
         }
-        else if (random < 10)
+        else if (random < 15)
         {
             return new Heart();
         }
-        else if (random < 13)
+        else if (random < 20)
         {
             return new Mine();
         }
         else
         {
             return new Dirt();
+        }
+    }
+    
+    public void isEnded(boolean e)
+    {
+        if (e)
+        {
+            setChanged();
+            notifyObservers("GAMEEND");
         }
     }
     

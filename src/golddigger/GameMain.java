@@ -1,5 +1,6 @@
 package golddigger;
 
+import InfoScreen.*;
 import Controllers.*;
 import Views.GameView;
 import golddigger.Objects.*;
@@ -16,8 +17,9 @@ public class GameMain {
     public static final int gameWidth = 9;
     public static final int gameHeight = 15;
     
-    public GameMain()
+    public GameMain(Player player)
     {
+        GameMain.player = player;
         GameView gameView = new GameView(map, player);
         
         GameController.addMap(map);
@@ -31,41 +33,17 @@ public class GameMain {
         gameView.addController(gameController);
     }
     
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        String name;
-        boolean nameOK = false;
-        
+    public static void main(String[] args) {        
         GameDB.establishConnection();
         GameDB.initializeDB();
         
         map = new Map(gameWidth, gameHeight);
         map.generateMap();
         
-        do
-        {
-            Utils.log("What is your name?");
-            name = scan.nextLine();
-            nameOK = checkName(name);
-        }
-        while (!nameOK);
-        
-        player = GameDB.getPlayer(name);
-        
-        if (player != null)
-        {
-            Utils.log("Your previous highscore is " + player.getScore());
-        }
-        else
-            player = new Player(name);
-        
-        //Initialize MVC
-        GameMain game = new GameMain();
-        
+        InfoScreen();
         
         printInstructions();
         printHelp();
-        Utils.log(player.toString());
         
         timer.start();
         
@@ -98,28 +76,6 @@ public class GameMain {
         return score;
     }
     
-    private static boolean checkName(String name)
-    {
-        if (name.length() > 0 && name.length() < 17)
-        {
-            char[] nameC = name.toLowerCase().toCharArray();
-            
-            for (char c : nameC)
-            {
-                if ((c < 'a' || c > 'z') && (c < '0' || c > '9'))
-                {
-                    Utils.log(("Name is invalid!"));
-                    return false;
-                }
-            }
-            
-            return true;
-        }
-        
-        Utils.log("Name can be up to 16 characters only!");
-        return false;
-    }
-    
     private static void printHelp()
     {
         Utils.log("\nLIST OF COMMANDS:\n"
@@ -140,5 +96,24 @@ public class GameMain {
                 + "H - Heart\n"
                 + "M - Mine\n"
                 + "C - Treasure Chest");
+    }
+    
+    private static void InfoScreen()
+    {
+        InfoView view = new InfoView();
+        InfoModel model = new InfoModel();
+        ScoreBoard sb = new ScoreBoard();
+        ScoreBoardController sbc = new ScoreBoardController();
+        PlayButtonController pbc = new PlayButtonController();
+        
+        sbc.addModel(sb);
+        
+        view.addSBController(sbc);
+        view.addPlayController(pbc);
+        
+        pbc.addModel(model);
+        pbc.addView(view);
+        model.addObserver(view);
+        sb.addObserver(view);
     }
 }

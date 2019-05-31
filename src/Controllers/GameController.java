@@ -28,7 +28,7 @@ public class GameController extends KeyAdapter {
     /**
      * Check which type of block player is on and display info attached to each type
      */
-    private static void checkBlock()
+    private static boolean checkBlock()
     {
         GameObject curBlock = map.getBlock(player.getPos());
         Types blockType = curBlock.getType();
@@ -72,13 +72,15 @@ public class GameController extends KeyAdapter {
                             "|        |___G O L D D I G G E R___|    |\n" +
                             " \\       |                          \\   |\n" +
                             "  \\______|                           \\__|");
-                    
+                    return true;
                 case SKY:
                 case DIRT:
                 default:
                     break;
             }
         }
+        
+        return false;
     }
     
     @Override
@@ -88,15 +90,15 @@ public class GameController extends KeyAdapter {
         {
             case KeyEvent.VK_LEFT:
                 player.moveLeft();
-                checkBlock();
+                map.isEnded(checkBlock());
                 break;
             case KeyEvent.VK_RIGHT:
                 player.moveRight();
-                checkBlock();
+                map.isEnded(checkBlock());
                 break;
             case KeyEvent.VK_DOWN:
                 player.moveDown();
-                checkBlock();
+                map.isEnded(checkBlock());
                 break;
             default:
                 break;

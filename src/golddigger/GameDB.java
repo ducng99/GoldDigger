@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * Initialize Derby with player table. This class includes functions for extracting and getting player's info.
@@ -106,6 +107,34 @@ public class GameDB {
             System.out.println("Player not found or data corrupted");
             return null;
         }
+    }
+    
+    public static ArrayList<Player> getAllPlayers()
+    {
+        ArrayList<Player> list = new ArrayList<>();
+        
+        ResultSet rs = null;
+        try {
+            Statement statement = conn.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, 
+                    ResultSet.CONCUR_READ_ONLY);
+            
+            String readPlayerInfo = "SELECT * FROM Player";
+            
+            rs = statement.executeQuery(readPlayerInfo);
+            while (!rs.isAfterLast())
+            {
+                Player p = new Player(rs.getString("Name"), rs.getInt("Score"));
+                list.add(p);
+                rs.next();
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Player not found or data corrupted");
+        }
+        
+        return list;
     }
     
     public static void removePlayer(Player player)
