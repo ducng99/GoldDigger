@@ -3,9 +3,7 @@ package InfoScreen;
 import golddigger.GameDB;
 import golddigger.Player;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
-import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,6 +26,7 @@ public class ScoreBoard extends Observable {
         JFrame frame = new JFrame("Scoreboard of the Diggers");
         frame.getContentPane().setLayout(null);
         frame.setSize(300, 400);
+        frame.setLocation(300, 0);
         
         DefaultTableModel tableModel = new DefaultTableModel(new Object[] {"Name", "Score"}, players.size());
         

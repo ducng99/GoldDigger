@@ -3,14 +3,11 @@ package golddigger;
 import InfoScreen.*;
 import Controllers.*;
 import Views.GameView;
-import golddigger.Objects.*;
-import java.util.Scanner;
 /**
  * 
  * @author Duc Nguyen 17974984
  */
 public class GameMain {
-    private static Player player;
     private static Map map;
     private static Timer timer = new Timer();
     
@@ -19,8 +16,7 @@ public class GameMain {
     
     public GameMain(Player player)
     {
-        GameMain.player = player;
-        GameView gameView = new GameView(map, player);
+        GameView gameView = new GameView(map, player, timer);
         
         GameController.addMap(map);
         GameController.addPlayer(player);
@@ -45,36 +41,8 @@ public class GameMain {
         printInstructions();
         printHelp();
         
-        timer.start();
-        
-        Utils.log(player.toString() + " Time: " + timer.getTime());
-        
-        endGame();
-    }
-    
-    /**
-     * Display information at end game and save the information to file
-     */
-    private static void endGame()
-    {
-        timer.stopTimer();
-        int finalScore = calculateFinalScore();
-        //FileHandler.saveData(player.getName(), finalScore);
-        Utils.log("Your Final Score is " + finalScore);
-        Utils.log("Game ended!");
-    }
-    
-    /**
-     * Calculate final score using given equation
-     * @return final score
-     */
-    private static int calculateFinalScore()
-    {
-        int score = player.getScore() - (int)(timer.getTime() / 5.);
-        if (score < 0)
-            score = 0;
-        return score;
-    }
+        //endGame();
+    }    
     
     private static void printHelp()
     {

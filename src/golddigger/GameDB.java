@@ -49,12 +49,12 @@ public class GameDB {
         }
     }
     
-    public static void createPlayer(Player player)
+    public static void addPlayer(Player player)
     {
         try {
             Statement statement = conn.createStatement();
             
-            String createPlayer = "INSERT INTO Player values("
+            String createPlayer = "INSERT INTO Player values('"
                     + player.getName() +"', " + player.getScore()
                     + ")";
             
@@ -75,7 +75,7 @@ public class GameDB {
             Statement statement = conn.createStatement();
             String updatePlayerInfo = "UPDATE Player SET "
                     + "Score=" + player.getScore()
-                    + " WHERE Name=" + player.getName();
+                    + " WHERE Name='" + player.getName() + "'";
             statement.executeUpdate(updatePlayerInfo);
         }
         catch (SQLException e)
@@ -92,7 +92,7 @@ public class GameDB {
                     ResultSet.TYPE_SCROLL_INSENSITIVE, 
                     ResultSet.CONCUR_READ_ONLY);
             
-            String readPlayerInfo = "SELECT * FROM Player WHERE Name=" + name;
+            String readPlayerInfo = "SELECT * FROM Player WHERE Name='" + name + "'";
             
             rs = statement.executeQuery(readPlayerInfo);
             rs.first();
@@ -122,16 +122,15 @@ public class GameDB {
             String readPlayerInfo = "SELECT * FROM Player";
             
             rs = statement.executeQuery(readPlayerInfo);
-            while (!rs.isAfterLast())
+            while (rs.next())
             {
                 Player p = new Player(rs.getString("Name"), rs.getInt("Score"));
                 list.add(p);
-                rs.next();
             }
         }
         catch (SQLException e)
         {
-            System.out.println("Player not found or data corrupted");
+            System.out.println("Cannot find any player or data corrupted");
         }
         
         return list;
@@ -141,7 +140,7 @@ public class GameDB {
     {
         try {
             Statement statement = conn.createStatement();
-            String removePlayer = "DELETE FROM Player WHERE Name=" + player.getName();
+            String removePlayer = "DELETE FROM Player WHERE Name='" + player.getName() + "'";
             statement.executeUpdate(removePlayer);
         }
         catch (SQLException e)

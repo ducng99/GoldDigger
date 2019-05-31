@@ -1,8 +1,6 @@
 
 package golddigger.Objects;
 
-import java.util.Observable;
-
 /**
  * Abstract class for objects in game
  * @author Duc Nguyen 17974984

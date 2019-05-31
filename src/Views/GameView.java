@@ -1,11 +1,13 @@
 package Views;
 
 import Controllers.GameController;
+import golddigger.GameDB;
 import golddigger.GameMain;
 import golddigger.Map;
 import golddigger.Objects.GameObject;
 import golddigger.Objects.Types;
 import golddigger.Player;
+import golddigger.Timer;
 import golddigger.Utils;
 import java.awt.Font;
 import java.awt.Color;
@@ -16,6 +18,7 @@ import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -26,6 +29,7 @@ public class GameView implements Observer {
     private static final int SIZE = 64;
     private Map map;
     private Player player;
+    private Timer timer;
     private JFrame frame = new JFrame("Gold Digger");
     private JPanel panel = new JPanel();
     private JLabel[][] blocks = new JLabel[GameMain.gameWidth][GameMain.gameHeight];
@@ -33,6 +37,8 @@ public class GameView implements Observer {
     private JLabel closeButton = new JLabel();
     private JLabel scoreLabel = new JLabel();
     private JLabel lifeLabel = new JLabel();
+    private JLabel timeLabel = new JLabel();
+    private JLabel winningLabel = new JLabel();
     private static ImageIcon chestImg;
     private static ImageIcon diamondImg;
     private static ImageIcon dirtImg;
@@ -42,8 +48,9 @@ public class GameView implements Observer {
     private static ImageIcon skyImg;
     private static ImageIcon playerImg;
     private static ImageIcon closeImg;
+    private static ImageIcon winningImg;
     
-    public GameView(Map m, Player p)
+    public GameView(Map m, Player p, Timer t)
     {
         try {
             chestImg = new ImageIcon("img/Chest.jpg");
@@ -55,6 +62,7 @@ public class GameView implements Observer {
             skyImg = new ImageIcon("img/Sky.jpg");
             playerImg = new ImageIcon("img/Player.png");
             closeImg = new ImageIcon("img/CloseButton.png");
+            winningImg = new ImageIcon("img/Winning.png");
         } catch (Exception ex) {
             Utils.log("Cannot read images");
             return;
@@ -62,6 +70,7 @@ public class GameView implements Observer {
         
         map = m;
         player = p;
+        timer = t;
         
         System.out.println("View: initialize");
         
@@ -102,7 +111,7 @@ public class GameView implements Observer {
         panel.setComponentZOrder(scoreLabel, 2);
         
         lifeLabel.setSize(SIZE * 2, SIZE);
-        lifeLabel.setLocation(SIZE * (GameMain.gameWidth / 2), 0);
+        lifeLabel.setLocation(SIZE * (GameMain.gameWidth / 2 - 1), 0);
         lifeLabel.setFont(new Font("Courier New", Font.BOLD, 32));
         String lifeCount = "";
         for (int life = 0; life < player.getLife(); life++)
@@ -111,6 +120,14 @@ public class GameView implements Observer {
         lifeLabel.setForeground(Color.YELLOW);
         panel.add(lifeLabel);
         panel.setComponentZOrder(lifeLabel, 3);
+        
+        timeLabel.setSize(SIZE * 3, SIZE);
+        timeLabel.setLocation(SIZE * (GameMain.gameWidth - 4), 0);
+        timeLabel.setFont(new Font("Courier New", Font.BOLD, 28));
+        timeLabel.setForeground(Color.YELLOW);
+        timeLabel.setText("Time: ");
+        panel.add(timeLabel);
+        panel.setComponentZOrder(timeLabel, 4);
         
         for (int width = 0; width < blocks.length; width++)
         {
@@ -121,16 +138,28 @@ public class GameView implements Observer {
                 blocks[width][height].setSize(SIZE, SIZE);
                 blocks[width][height].setLocation(width * SIZE, height * SIZE);
                 panel.add(blocks[width][height]);
-                panel.setComponentZOrder(blocks[width][height], 4);
+                panel.setComponentZOrder(blocks[width][height], 5);
             }
         }
         
+        winningLabel.setIcon(winningImg);
+        winningLabel.setSize(SIZE * GameMain.gameWidth, SIZE * GameMain.gameHeight);
+        winningLabel.setLocation(0, 0);
+        winningLabel.setVisible(false);
+        panel.add(winningLabel);
+        panel.setComponentZOrder(winningLabel, 6);
+        
         frame.setVisible(true);
+        
+        timer.start();
     }
 
     @Override
     public void update(Observable o, Object obj) {
         String noti = (String)obj;
+        
+        timeLabel.setText("Time: " + (int)(timer.getTime() * 10));
+        
         if (noti.startsWith("BLOCK:"))
         {
             String[] posS = ((String)obj).substring("BLOCK:".length()).split("-");
@@ -141,7 +170,7 @@ public class GameView implements Observer {
         else if (noti.startsWith("SCORE:"))
         {
             String score = noti.substring("SCORE:".length());
-            scoreLabel.setText(score);
+            scoreLabel.setText("Score: " + score);
         }
         else if (noti.startsWith("LIFE:"))
         {
@@ -153,7 +182,29 @@ public class GameView implements Observer {
         }
         else if (noti.equals("GAMEEND"))
         {
+            winningLabel.setVisible(true);
+            timer.stopTimer();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Utils.log("Sleep failed");
+            }
             
+            int score = calculateFinalScore();
+            
+            JOptionPane.showMessageDialog(null, "Congratulations! You are officially a GOLD DIGGER!!\nYou got " + score + " points!", "DIG DIG DIG", JOptionPane.PLAIN_MESSAGE);
+            player.setScore(score);
+            
+            if (GameDB.getPlayer(player.getName()) != null)
+            {
+                GameDB.updatePlayer(player);
+            }
+            else
+            {
+                GameDB.addPlayer(player);
+            }
+            
+            System.exit(0);
         }
         else
         {
@@ -201,5 +252,17 @@ public class GameView implements Observer {
         }
         else
             return dirtImg;
+    }
+    
+    /**
+     * Calculate final score using given equation
+     * @return final score
+     */
+    private int calculateFinalScore()
+    {
+        int score = player.getScore() - (int)(timer.getTime() / 5.);
+        if (score < 0)
+            score = 0;
+        return score;
     }
 }
