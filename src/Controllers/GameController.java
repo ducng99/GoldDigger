@@ -73,7 +73,6 @@ public class GameController extends KeyAdapter {
                             " \\       |                          \\   |\n" +
                             "  \\______|                           \\__|");
                     
-                    //gameInProgress = false;
                 case SKY:
                 case DIRT:
                 default:

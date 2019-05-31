@@ -78,7 +78,7 @@ public class Player extends Observable {
         {
             this.score = score;
             setChanged();
-            notifyObservers("");
+            notifyObservers("SCORE:" + this.score);
         }
         else
             Utils.log("Score " + score + " is not valid");
@@ -110,7 +110,7 @@ public class Player extends Observable {
         {
             this.life = life;
             setChanged();
-            notifyObservers("");
+            notifyObservers("LIFE:" + this.life);
         }
         else
             Utils.log("Life not valid");

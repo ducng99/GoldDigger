@@ -13,10 +13,8 @@ public class GameMain {
     private static Map map;
     private static Timer timer = new Timer();
     
-    public static final int gameWidth = 15;
-    public static final int gameHeight = 9;
-    
-    private static boolean gameInProgress;
+    public static final int gameWidth = 9;
+    public static final int gameHeight = 15;
     
     public GameMain()
     {
@@ -64,7 +62,7 @@ public class GameMain {
         //Initialize MVC
         GameMain game = new GameMain();
         
-        gameInProgress = true;
+        
         printInstructions();
         printHelp();
         Utils.log(player.toString());
