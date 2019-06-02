@@ -110,7 +110,14 @@ public class Player extends Observable {
         {
             this.life = life;
             setChanged();
-            notifyObservers("LIFE:" + this.life);
+            if (life != 0)
+            {
+                notifyObservers("LIFE:" + this.life);
+            }
+            else
+            {
+                notifyObservers("GAMEEND:LOSE");
+            }
         }
         else
             Utils.log("Life not valid");

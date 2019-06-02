@@ -28,10 +28,13 @@ public class ScoreBoard extends Observable {
         frame.setSize(300, 400);
         frame.setLocation(300, 0);
         
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[] {"Name", "Score"}, players.size());
+        //DefaultTableModel tableModel = new DefaultTableModel(new Object[] {"Name", "Score"}, players.size());
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.addColumn("Name");
+        tableModel.addColumn("Score");
         
         for (Player p : players)
-        {            
+        {
             tableModel.addRow(new Object[] {p.getName(), p.getScore()});
         }
         
@@ -42,8 +45,5 @@ public class ScoreBoard extends Observable {
         frame.add(scrollPane);
         
         frame.setVisible(true);
-        
-        /*setChanged();
-        notifyObservers("NOTI:" + sb);*/
     }
 }

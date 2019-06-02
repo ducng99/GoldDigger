@@ -129,6 +129,13 @@ public class GameView implements Observer {
         panel.add(timeLabel);
         panel.setComponentZOrder(timeLabel, 4);
         
+        winningLabel.setIcon(winningImg);
+        winningLabel.setSize(SIZE * GameMain.gameWidth, SIZE * GameMain.gameHeight);
+        winningLabel.setLocation(0, 0);
+        winningLabel.setVisible(false);
+        panel.add(winningLabel);
+        panel.setComponentZOrder(winningLabel, 5);
+        
         for (int width = 0; width < blocks.length; width++)
         {
             for (int height = 0; height < blocks[width].length; height++)
@@ -138,16 +145,9 @@ public class GameView implements Observer {
                 blocks[width][height].setSize(SIZE, SIZE);
                 blocks[width][height].setLocation(width * SIZE, height * SIZE);
                 panel.add(blocks[width][height]);
-                panel.setComponentZOrder(blocks[width][height], 5);
+                panel.setComponentZOrder(blocks[width][height], 6);
             }
         }
-        
-        winningLabel.setIcon(winningImg);
-        winningLabel.setSize(SIZE * GameMain.gameWidth, SIZE * GameMain.gameHeight);
-        winningLabel.setLocation(0, 0);
-        winningLabel.setVisible(false);
-        panel.add(winningLabel);
-        panel.setComponentZOrder(winningLabel, 6);
         
         frame.setVisible(true);
         
@@ -180,19 +180,33 @@ public class GameView implements Observer {
                 lifeCount += "♥";
             lifeLabel.setText(lifeCount);
         }
-        else if (noti.equals("GAMEEND"))
+        else if (noti.equals("GAMEEND:WIN"))
         {
             winningLabel.setVisible(true);
             timer.stopTimer();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                Utils.log("Sleep failed");
-            }
             
             int score = calculateFinalScore();
             
             JOptionPane.showMessageDialog(null, "Congratulations! You are officially a GOLD DIGGER!!\nYou got " + score + " points!", "DIG DIG DIG", JOptionPane.PLAIN_MESSAGE);
+            player.setScore(score);
+            
+            if (GameDB.getPlayer(player.getName()) != null)
+            {
+                GameDB.updatePlayer(player);
+            }
+            else
+            {
+                GameDB.addPlayer(player);
+            }
+            
+            System.exit(0);
+        }
+        else if (noti.equals("GAMEEND:LOSE"))
+        {
+            timer.stopTimer();
+            
+            int score = calculateFinalScore();
+            JOptionPane.showMessageDialog(null, "Too bad... You are not a gold digger :(", "Sorry...", JOptionPane.PLAIN_MESSAGE);
             player.setScore(score);
             
             if (GameDB.getPlayer(player.getName()) != null)

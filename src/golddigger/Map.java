@@ -80,7 +80,7 @@ public class Map extends Observable {
         if (e)
         {
             setChanged();
-            notifyObservers("GAMEEND");
+            notifyObservers("GAMEEND:WIN");
         }
     }
     
